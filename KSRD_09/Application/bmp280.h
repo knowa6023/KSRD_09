@@ -182,5 +182,7 @@ bool bmp280_read_fixed(BMP280_HandleTypedef *dev, int32_t *temperature,
 bool bmp280_read_float(BMP280_HandleTypedef *dev, float *temperature,
                        float *pressure, float *humidity);
 
+bool bmp280_read_int32_t(BMP280_HandleTypedef *dev, uint32_t *temperature, uint32_t *pressure);
+
 
 #endif  // __BMP280_H__

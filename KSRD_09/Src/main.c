@@ -20,21 +20,15 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "fatfs.h"
+#include "global.h"
+#include "string.h"
+#include "stdio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 char buffer1[512] ="Selection of VAM is set by the previous address set instruction. If the address set instruction of RAM is not performed before this instruction, the data that has been read first is invalid, as the direction of AC is not yet determined. If RAM data is read several times without RAM address instructions set before, read operation, the correct RAM data can be obtained from the second. But the first data would be incorrect, as there is no time margin to transfer RAM data. In case of DDRAM read operation The..."; //Ѕуфер данных
 char buffer2[1024]="Selection of VAM is set by the previous address set instruction. If the address set instruction of RAM is not performed before this instruction, the data that has been read first is invalid, as the direction of AC is not yet determined. If RAM data is read several times without RAM address instructions set before, read operation, the correct RAM data can be obtained from the second. But the first data would be incorrect, as there is no time margin to transfer RAM data. In case of DDRAM read operation The...Selection of VAM is set by the previous address set instruction. If the address set instruction of RAM is not performed before this instruction, the data that has been read first is invalid, as the direction of AC is not yet determined. If RAM data is read several times without RAM address instructions set before, read operation, the correct RAM data can be obtained from the second. But the first data would be incorrect, as there is no time margin to transfer RAM data. In case of DDRAM read operation The..."; //Ѕуфер данных
 uint8_t sect[512];
-extern char str1[60];
-uint32_t byteswritten, bytesread;
-uint8_t result;
-extern char USERPath[4]; /* USER logical drive path */
-FATFS SDFatFs;
-FATFS *fs;
-FIL MyFile;
-
-
 
 char str[16] = {0,};
 uint64_t count_tic_1, count_tic_2 = 0;
@@ -134,72 +128,9 @@ int main(void)
   MX_SPI1_Init();
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
-/*    //strcpy(Data_RouteFile.mas, "2022_12_23-03:12:08\r");
-  	strcpy(Data_RouteFile.dataTime,"2022_05_26-10:23:54");
-    strcpy(Data_RouteFile.dataGPS.str1, "$GPGSV,4,3,13,16,,,20,17,27,191,,20,15,107,,27,44,020,*44\r");
-    strcpy(Data_RouteFile.dataGPS.str2, "$GNVTG,,T,,M,0.087,N,0.160,K,D*30\r");
-    strcpy(Data_RouteFile.dataGPS.str3, "$GNGLL,5508.51568,N,03637.24959,E,194618.00,A,D*74\r");
-    strcpy(Data_RouteFile.dataGPS.str4, "$GNGGA,195037.00,5508.50476,N,03637.23704,E,2,10,1.62,154.2,M,14.5,M,,0000*45\r");
-    strcpy(Data_RouteFile.dataGPS.str5, "$GPGSV,1,1,00*79\r");
-    strcpy(Data_RouteFile.dataGPS.str6, "$GLGSV,1,1,00*65\r");
-    strcpy(Data_RouteFile.dataGPS.str7, "$GNRMC,194257.00,A,5508.51940,N,03637.25106,E,0.274,,030422,,,D*61\r");
 
-    strcpy(Data_RouteFile.BD_data,"010428000115d0000000d5438012fd3f570495338ae0343fc4c31533460ae40047000000000000000009f1d9ba");
-  	Data_RouteFile.data_BPLA.heightFly = 1000;
-  	Data_RouteFile.data_BPLA.temperature =2500;
-  	sprintf(Data_RouteFile.data_BPLA.dataGPS.str7, "$GNRMC,194257.00,A,5508.51940,N,03637.25106,E,0.274,,030422,,,D*61\r");*/
-
-
-
-
-	/* Wait for SD module reset */
-/*	HAL_Delay(500);
-	strcpy((char *)data_check.mas1,buffer1);
-	strcpy((char *)data_check.mas2,buffer1);
-	strcpy((char *)data_check.mas3,buffer1);
-	strcpy((char *)data_check.mas4,buffer1);
-	strcpy((char *)data_check.mas5,buffer1);
-	strcpy((char *)data_check.mas6,buffer1);
-	strcpy((char *)data_check.mas7,buffer1);*/
-
-
-
-	/*	uint32_t res= f_mount(&SDFatFs,(TCHAR const*)USERPath,1);
-	  if(res!=FR_OK)
-	  {
-	    Error_Handler();
-	  }
-	  else
-	  {
-		uint8_t name_file[20];//=sprintf("route_%d.bin",i);
-		SCB_DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;// разрешаем использовать DWT
-		DWT_CONTROL|= DWT_CTRL_CYCCNTENA_Msk; // включаем счётчик
-		DWT_CYCCNT = 0;// обнуляем счётчик
-		for(int i=0;i<200;i++)
-		{
-
-			sprintf((char*)name_file,"route_%d.bin",i);
-			count_tic_1 = DWT_CYCCNT; // кол-во тактов
-			//strcpy(name_file,"route_",(char)i);
-			 if(f_open(&MyFile,(const TCHAR*)name_file,FA_CREATE_ALWAYS|FA_WRITE)!=FR_OK)
-			 {
-				 Error_Handler();
-			 }
-			 else
-			 {
-				uint32_t sizeP = sizeof(Data_RouteFile)/1;//512+512-1;//
-				res=f_write(&MyFile,(const void*)&Data_RouteFile,sizeP,(void*)&byteswritten);
-			    if((byteswritten==0)||(res!=FR_OK))
-			    {
-			    	Error_Handler();
-			    }
-			    f_close(&MyFile);
-			 }
-			// count_tic_2 = DWT_CYCCNT; // кол-во тактов
-		}
-		count_tic_2 = DWT_CYCCNT; // кол-во тактов
-	  }*/
-
+    uint8_t name_file[20];
+	sprintf((char*)name_file,"route_%d.bin",1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -390,7 +321,7 @@ static void MX_SPI2_Init(void)
   hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi2.Init.NSS = SPI_NSS_HARD_OUTPUT;
-  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
   hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -515,7 +446,104 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+//void MakeFile(TYPE_FILE type, const TCHAR* nameFile, const void* inStruct, uint32_t sizeStruct)
+//{
+//	uint32_t res= f_mount(&SDFatFs,(TCHAR const*)USERPath,1);
+//	uint32_t byteswritten;
+//	if(res!=FR_OK)
+//	{
+//		Error_Handler();
+//	}
+//	else
+//	{
+//		if(f_open(&MyFile,(const TCHAR*)nameFile,FA_CREATE_ALWAYS|FA_WRITE)!=FR_OK)
+//		{
+//			Error_Handler();
+//		}
+//		else
+//		{
+//			res=f_write(&MyFile,(const void*) &inStruct, sizeStruct, (void*)&byteswritten);
+//			if((byteswritten==0)||(res!=FR_OK))
+//			{
+//				Error_Handler();
+//			}
+//			f_close(&MyFile);
+//		}
+//	}
+//	return res;
+//}
 
+
+
+//void do_it(const TCHAR* _name_file,const void* inStruct, uint32_t sizeStruct )
+//{
+//	uint32_t res= f_mount(&SDFatFs,(TCHAR const*)USERPath,1);
+//		  if(res!=FR_OK)
+//		  {
+//		    Error_Handler();
+//		  }
+//		  else
+//		  {
+//			uint8_t name_file[20];//=sprintf("route_%d.bin",i);
+//			//SCB_DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;// разрешаем использовать DWT
+//			//DWT_CONTROL|= DWT_CTRL_CYCCNTENA_Msk; // включаем счётчик
+//			///DWT_CYCCNT = 0;// обнуляем счётчик
+//			for(int i=0;i<200;i++)
+//			{
+//
+//				sprintf((char*)_name_file,"route_%d.bin",i);
+//				//count_tic_1 = DWT_CYCCNT; // кол-во тактов
+//				//strcpy(name_file,"route_",(char)i);
+//				 if(f_open(&MyFile,(const TCHAR*)_name_file,FA_CREATE_ALWAYS|FA_WRITE)!=FR_OK)
+//				 {
+//					 Error_Handler();
+//				 }
+//				 else
+//				 {
+//					//uint32_t sizeP = sizeof(inStruct)/1;//512+512-1;//
+//					res=f_write(&MyFile,(const void*)inStruct,sizeStruct,(void*)&byteswritten);
+//				    if((byteswritten==0)||(res!=FR_OK))
+//				    {
+//				    	Error_Handler();
+//				    }
+//				    f_close(&MyFile);
+//				 }
+//				// count_tic_2 = DWT_CYCCNT; // кол-во тактов
+//			}
+//			//count_tic_2 = DWT_CYCCNT; // кол-во тактов
+//		  }
+//}
+
+
+
+
+
+//static uint32_t MakeFile(TYPE_FILE type, uint8_t* nameFile, void* inStruct, uint32_t sizeStruct)
+//{
+//	uint32_t res= f_mount(&SDFatFs,(TCHAR const*)USERPath,1);
+//	uint32_t byteswritten;
+//	if(res!=FR_OK)
+//	{
+//		Error_Handler();
+//	}
+//	else
+//	{
+//		if(f_open(&MyFile,(const TCHAR*)nameFile,FA_CREATE_ALWAYS|FA_WRITE)!=FR_OK)
+//		{
+//			Error_Handler();
+//		}
+//		else
+//		{
+//			res=f_write(&MyFile,(const void*)&inStruct, sizeStruct, (void*)&byteswritten);
+//			if((byteswritten==0)||(res!=FR_OK))
+//			{
+//				Error_Handler();
+//			}
+//			f_close(&MyFile);
+//		}
+//	}
+//	return res;
+//}
 /* USER CODE END 4 */
 
 /**

@@ -54,8 +54,8 @@
           <LinkSettings>
             <LinkAdditionalLibs />
           </LinkSettings>
-          <heapSize>0x200</heapSize>
-          <stackSize>0x400</stackSize>
+          <heapSize>0x2000</heapSize>
+          <stackSize>0x4000</stackSize>
           <board>STM32F4DISCOVERY</board>
           <debugprobe>swd</debugprobe>
           <optimization />

@@ -22,8 +22,39 @@ extern UART_HandleTypeDef huart3;
 
 
 
+typedef enum Bool
+{
+    FALSE,
+    TRUE
+} Bool;
 
-//------------------------------------------------------------------------------------------
+typedef enum
+{
+	GROUND=0,
+	FLY
+}KSRD_09_LOCATION;
+
+typedef enum
+{
+	NOSET=0,
+	SET_FROM_PC,
+	SET_FROM_GPS,
+	SET_FROM_GPS_BPLA
+}RTC_set;
+
+typedef enum
+{
+	FILE_ROUTE=0,
+	FILE_SPECTR,
+	FILE_INIT
+}TYPE_FILE;
+
+
+typedef struct
+{
+	uint8_t flag_RTC_set;
+	uint8_t flag_KSRD_09_Location;
+}Global_flag_TypeDef;
 
 
 //BPLA
@@ -36,7 +67,7 @@ typedef struct
 }BPLA_TypeDef;
 
 
-// Total
+// Total Data_RouteFile
 typedef struct
 {
 	uint8_t dataTime_RTC[19];			//19 byte

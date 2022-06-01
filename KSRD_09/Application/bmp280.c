@@ -299,7 +299,7 @@ bool bmp280_read_fixed(BMP280_HandleTypedef *dev, int32_t *temperature, uint32_t
 
 	int32_t fine_temp;
 	*temperature = compensate_temperature(dev, adc_temp, &fine_temp);
-	*pressure = compensate_pressure(dev, adc_pressure, fine_temp);
+	*pressure = compensate_pressure(dev, adc_pressure, fine_temp);////&&&
 
 	if (humidity) {
 		int32_t adc_humidity = data[6] << 8 | data[7];
@@ -320,6 +320,24 @@ bool bmp280_read_float(BMP280_HandleTypedef *dev, float *temperature, float *pre
 		*pressure = (float) fixed_pressure / 256;
 		if (humidity)
 			*humidity = (float) fixed_humidity / 1024;
+		return true;
+	}
+
+	return false;
+}
+bool bmp280_read_int32_t(BMP280_HandleTypedef *dev, uint32_t *temperature, uint32_t *pressure) {
+	int32_t fixed_temperature;
+	uint32_t fixed_pressure;
+	uint32_t fixed_humidity;
+	uint32_t humidity=0;
+	if (bmp280_read_fixed(dev, &fixed_temperature, &fixed_pressure,
+			humidity ? &fixed_humidity : NULL)) {
+		*temperature = fixed_temperature;
+		*pressure    = fixed_pressure;
+//		*temperature = (float) fixed_temperature / 100;
+//		*pressure = (float) fixed_pressure / 256;
+//		if (humidity)
+//			*humidity = (float) fixed_humidity / 1024;
 		return true;
 	}
 
